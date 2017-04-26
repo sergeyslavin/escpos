@@ -4,6 +4,7 @@ module Escpos
   class Report
     include ERB::Util
     include Helpers
+    include Table
 
     def initialize(file_or_path, optr = {})
       if file_or_path.is_a?(String)

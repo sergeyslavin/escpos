@@ -8,7 +8,7 @@ module Escpos
       data.encode(opts.fetch(:encoding), 'UTF-8', {
         invalid: opts.fetch(:invalid, :replace),
         undef: opts.fetch(:undef, :replace),
-        replace: opts.fetch(:replace, '?')        
+        replace: opts.fetch(:replace, '?')
       })
     end
 
@@ -22,6 +22,65 @@ module Escpos
     end
     alias :set_encoding :encoding
     alias :set_printer_encoding :encoding
+
+    def config(width:, letter_width:)
+      @width = width
+      @letter_width = letter_width
+      @letter_in_line = @width / @letter_width
+    end
+
+    def tab(data)
+      [
+        Escpos.sequence(Escpos::CTL_HT),
+        data
+      ].join
+    end
+
+    def dash_line(count)
+      [
+        Escpos::sequence(Escpos::DASH) * count
+      ].join
+    end
+
+    def line(count)
+      [
+        Escpos::sequence(Escpos::UNDERSCORE) * count
+      ].join
+    end
+
+    alias :underscore_line :line
+
+    def fit_line
+      unless @width || @letter_width
+        raise 'Config width and letter_width should be provided.'
+      end
+
+      number_of_dashes = @width / @letter_width
+      line(number_of_dashes)
+    end
+
+    def fit_dash_line
+      unless @width || @letter_width
+        raise 'Config width and letter_width should be provided.'
+      end
+
+      number_of_dashes = @width / @letter_width
+      dash_line(number_of_dashes)
+    end
+
+    def new_line
+      [
+        Escpos.sequence(Escpos::CTL_LF)
+      ].join
+    end
+
+    def new_line_and_tab
+      [
+        Escpos.sequence(Escpos::CTL_LF),
+        Escpos.sequence(Escpos::CTL_HT),
+      ].join
+    end
+    alias :lnt :new_line_and_tab
 
     def text(data)
       [

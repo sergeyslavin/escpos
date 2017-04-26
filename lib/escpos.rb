@@ -1,6 +1,10 @@
+$: << File.dirname(__FILE__)
+
+require 'terminal-table'
 require "escpos/version"
 require "escpos/printer"
 require "escpos/helpers"
+require "escpos/table"
 require "escpos/report"
 
 module Escpos
@@ -18,7 +22,7 @@ module Escpos
   CTL_VT                       = [ 0x0b ]                   # Vertical tab
 
   # Paper
-  PAPER_FULL_CUT               = [ 0x1d, 0x56, 0x00 ]			   # Full paper cut 
+  PAPER_FULL_CUT               = [ 0x1d, 0x56, 0x00 ]			   # Full paper cut
   PAPER_PARTIAL_CUT            = [ 0x1d, 0x56, 0x01 ]			   # Partial paper cut
   PAPER_CUT_A                  = [ 0x1d, 0x56, 0x41 ]			   # Paper cut A
   PAPER_CUT_B                  = [ 0x1d, 0x56, 0x42 ]			   # Paper cut B
@@ -110,6 +114,9 @@ module Escpos
 
   # Images
   IMAGE                      = [ 0x1d, 0x76, 0x30, 0x00 ]    # Start image pixel data
+
+  DASH                       = [ 0x2d ]
+  UNDERSCORE                 = [ 0x5f ]
 
   # Transforms an array of codes into a string
   def sequence(*arr_sequence)
